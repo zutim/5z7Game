@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/ebar-go/ego v0.7.7
+	github.com/ebar-go/ego v0.8.0
 	github.com/ebar-go/ws v0.1.0
 	github.com/gin-gonic/gin v1.6.2
 	github.com/go-playground/locales v0.13.0
@@ -12,8 +12,11 @@ require (
 	github.com/go-playground/validator/v10 v10.2.0
 	github.com/go-redis/redis v6.15.7+incompatible
 	github.com/go-sql-driver/mysql v1.4.1
-	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/gogap/errors v0.0.0-20200228125012-531a6449b28c // indirect
+	github.com/gogap/stack v0.0.0-20150131034635-fef68dddd4f8 // indirect
+	github.com/gorilla/websocket v1.4.2
 	github.com/jinzhu/gorm v1.9.12
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7
 	github.com/robfig/cron v1.2.0
 	github.com/satori/go.uuid v1.2.0
@@ -21,4 +24,5 @@ require (
 	github.com/spf13/viper v1.6.3
 	github.com/stretchr/testify v1.4.0
 	go.uber.org/dig v1.9.0
+	golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297
 )

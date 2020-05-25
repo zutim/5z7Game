@@ -10,6 +10,7 @@ import (
 func Load(router *gin.Engine)  {
 	router.Use(middleware.Recover)
 
+	router.LoadHTMLGlob("./html/index.html")
 	router.GET("/", handler.IndexHandler)
 
 	// 定义需要token校验的路由
@@ -31,6 +32,7 @@ func Load(router *gin.Engine)  {
 
 	// websocket
 	router.GET("v1/ws", handler.WebsocketHandler)
+
 	go app.WebSocket().Start()
 
 	// 不需要校验token的路由

@@ -39,8 +39,12 @@ github.com/eapache/go-xerial-snappy v0.0.0-20180814174437-776d5712da21/go.mod h1
 github.com/eapache/queue v1.1.0/go.mod h1:6eCeP0CKFpHLu8blIFXhExK/dRa7WDZfr6jVFPTqq+I=
 github.com/ebar-go/ego v0.7.7 h1:DlKfH9R2PhfVvCvovkKIAYhl+Q69ktNG43/eib8Ick4=
 github.com/ebar-go/ego v0.7.7/go.mod h1:OTATT7duLTEdT4YOrBFyqwgJ4a/K/4yqfzgPkLsyvg8=
+github.com/ebar-go/ego v0.8.0 h1:yDnkghDyQl86KPNrDB+lT7kK7Pf1WP9WZrLkPCdt6c8=
+github.com/ebar-go/ego v0.8.0/go.mod h1:oMdbKskQtlZOBuLuyMKQLFsVEIC9IiGqI+4Na3FaiEY=
 github.com/ebar-go/event v0.1.0 h1:VwyVO0KauPYC+0+BRTbxChP0W/4GNNtj+9MXuwui4qc=
 github.com/ebar-go/event v0.1.0/go.mod h1:6jbMJhW8ZMmM6iOz6cI9EaYP7xbFGsIz9N17c/CB06Y=
+github.com/ebar-go/event v0.2.0 h1:+p4LXI4/L2nztpZJeXo2Hon1zEnbUGYPxu+pJfTCmAk=
+github.com/ebar-go/event v0.2.0/go.mod h1:6jbMJhW8ZMmM6iOz6cI9EaYP7xbFGsIz9N17c/CB06Y=
 github.com/ebar-go/loadbalance v0.1.1/go.mod h1:T3elba4bmh4tmnm4ZP8X6UJI0EdH8hsE3v8pnW8cqRg=
 github.com/ebar-go/ws v0.1.0 h1:aZ/x56pc4T8uaV39mI3HlwYvg6aD86c1Uxy8S4rTYgk=
 github.com/ebar-go/ws v0.1.0/go.mod h1:YIBr3UyQPjvJLw7t9DqoxDQGZn9lUy8iIPLNX5hXqsw=
@@ -78,6 +82,8 @@ github.com/go-sql-driver/mysql v1.4.1/go.mod h1:zAC/RDZ24gD3HViQzih4MyKcchzm+sOG
 github.com/go-stack/stack v1.8.0/go.mod h1:v0f6uXyyMGvRgIKkXu+yp6POWl0qKG85gN/melR3HDY=
 github.com/gogap/errors v0.0.0-20160523102334-149c546090d0 h1:VqIkkZjLjkDBqAGm0tvLRNMPiFTwNJjmQxB50DwSCRA=
 github.com/gogap/errors v0.0.0-20160523102334-149c546090d0/go.mod h1:tbRYYYC7g/H7QlCeX0Z2zaThWKowF4QQCFIsGgAsqRo=
+github.com/gogap/errors v0.0.0-20200228125012-531a6449b28c h1:dM8T2g87Kj9PBQjpstkQ20ZQjzrpZJwMwueX8mllrDI=
+github.com/gogap/errors v0.0.0-20200228125012-531a6449b28c/go.mod h1:tbRYYYC7g/H7QlCeX0Z2zaThWKowF4QQCFIsGgAsqRo=
 github.com/gogap/stack v0.0.0-20150131034635-fef68dddd4f8 h1:AuxION6c7in+AsPmFjQTUKT6/o1suT8XEEpfU0pWsHA=
 github.com/gogap/stack v0.0.0-20150131034635-fef68dddd4f8/go.mod h1:6q1WEv2BiAO4FSdwLQTJbWQYAn1/qDNJHUGJNXCj9kM=
 github.com/gogo/protobuf v1.1.1/go.mod h1:r8qH/GZQm5c6nD/R0oafs1akxWv10x8SbQlK7atdtwQ=
@@ -301,6 +307,7 @@ golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn
 golang.org/x/net v0.0.0-20190503192946-f4e77d36d62c/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
 golang.org/x/net v0.0.0-20190522155817-f3200d17e092/go.mod h1:HSz+uSET+XFnRR8LxR5pz3Of3rY3CfYBVs4xY44aLks=
 golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
+golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297 h1:k7pJ2yAPLPgbskkFdhRCsA77k2fySZ1zf2zCjvQCiIM=
 golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
 golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
 golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=

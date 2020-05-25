@@ -12,4 +12,3 @@ func Websocket() ws.Manager {
 	return w
 }
 
-

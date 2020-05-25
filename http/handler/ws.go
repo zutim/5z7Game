@@ -1,11 +1,17 @@
 package handler
 
 import (
-	"5z7Game/pkg/app"
+	"5z7Game/game"
+	"5z7Game/msg"
+	"5z7Game/pkg/utils"
+	"fmt"
+	"github.com/ebar-go/ego/app"
 	"github.com/ebar-go/ws"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
+
+
 
 func WebsocketHandler(ctx *gin.Context)  {
 	conn , err := ws.GetUpgradeConnection(ctx.Writer, ctx.Request)
@@ -14,13 +20,35 @@ func WebsocketHandler(ctx *gin.Context)  {
 		return
 	}
 
-	client := ws.NewConnection(conn, func(ctx *ws.Context) string {
-		// TODO 业务处理
-		return ctx.GetMessage()
+	client := ws.NewConnection(conn, func(ctx *ws.Context,c *ws.Connection) string {
+		var message *msg.Common
+		if err := utils.JsonDecode([]byte(ctx.GetMessage()),&message); err != nil {
+			fmt.Println(err)
+		}
+		//在线广播
+		Broad()
+		//交由Gm管理
+		game.Gm.Handler(c,message)
+		//return ctx.GetMessage()
+		return ""
 	})
 
+	app.WebSocket().Register(client)
+
 	go client.Listen()
+}
 
-	app.Websocket().Register(client)
-
+func Broad()  {
+	online := app.WebSocket().GetOnLine()
+	res,err := utils.JsonEncode(&msg.Common{
+		Op:      "server_notice",
+		Args:    "",
+		Msg:     fmt.Sprintf("连接成功，当前在线人数：%v", online),
+		MsgType: "string",
+		FlagId:  0,
+	})
+	if  err != nil {
+		fmt.Println(err)
+	}
+	app.WebSocket().Broadcast([]byte(res),nil)
 }
