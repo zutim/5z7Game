@@ -1,5 +1,5 @@
 server:
-  http-port: 8091
+  http-port: 8080
   log-path: /tmp
 
 db:
