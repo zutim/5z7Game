@@ -3,15 +3,28 @@ package route
 import (
 	"5z7Game/http/handler"
 	"5z7Game/http/middleware"
-	"github.com/ebar-go/ego/app"
+	"github.com/ebar-go/ego"
 	"github.com/gin-gonic/gin"
 )
 
 func Load(router *gin.Engine)  {
 	router.Use(middleware.Recover)
 
-	router.LoadHTMLGlob("./html/index.html")
+	router.LoadHTMLFiles("./html/view/index.html", "./html/view/login.html")
+	//加载静态资源，例如网页的css、js
+	router.Static("html/static", "./html/static")
+
+	//加载静态资源，一般是上传的资源，例如用户上传的图片
+	//router.StaticFS("/upload", http.Dir("upload"))
+
+	//加载单个静态文件
+	//router.StaticFile("/favicon.ico", "./static/favicon.ico")
+
+	//router.LoadHTMLGlob("./html/index.html")
 	router.GET("/", handler.IndexHandler)
+
+	//router.LoadHTMLGlob("./html/login.html")
+	router.GET("/user",handler.UserHandler)
 
 	// 定义需要token校验的路由
 	auth := router.Group("v1/home").Use(middleware.JWT)
@@ -30,10 +43,13 @@ func Load(router *gin.Engine)  {
 
 	}
 
-	// websocket
-	router.GET("v1/ws", handler.WebsocketHandler)
 
-	go app.WebSocket().Start()
+	// websocket
+	ws := ego.WebsocketServer()
+
+	router.GET("/ws", handler.WebsocketHandler)
+
+	go ws.Start()
 
 	// 不需要校验token的路由
 	public := router.Group("v1/public")

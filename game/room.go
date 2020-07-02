@@ -5,7 +5,7 @@ import (
 	"5z7Game/pkg/utils"
 	"errors"
 	"fmt"
-	"github.com/ebar-go/ego/app"
+	"github.com/ebar-go/ego"
 	"github.com/ebar-go/ws"
 	"log"
 	"sync"
@@ -114,7 +114,7 @@ func (r *Room) GameStart(c *ws.Connection, m *msg.Common) {
 			if  err != nil {
 				fmt.Println(err)
 			}
-			app.WebSocket().Broadcast([]byte(res),nil)
+			ego.WebsocketServer().Broadcast([]byte(res),nil)
 		})
 		r.determineRole(c, m)
 		res,err := utils.JsonEncode(&msg.Common{
@@ -127,7 +127,7 @@ func (r *Room) GameStart(c *ws.Connection, m *msg.Common) {
 		if  err != nil {
 			fmt.Println(err)
 		}
-		app.WebSocket().Broadcast([]byte(res),nil)
+		ego.WebsocketServer().Broadcast([]byte(res),nil)
 	} else {
 		res,err := utils.JsonEncode(&msg.Common{
 			Op:      "game_waiting",
@@ -139,7 +139,7 @@ func (r *Room) GameStart(c *ws.Connection, m *msg.Common) {
 		if  err != nil {
 			fmt.Println(err)
 		}
-		app.WebSocket().Broadcast([]byte(res),nil)
+		ego.WebsocketServer().Broadcast([]byte(res),nil)
 	}
 }
 
@@ -175,8 +175,7 @@ func (r *Room) BlackChessDown(c *ws.Connection, m *msg.Common) {
 			if  err != nil {
 				fmt.Println(err)
 			}
-			app.WebSocket().Broadcast([]byte(res),nil)
-
+			ego.WebsocketServer().Broadcast([]byte(res),nil)
 			r.GameOver()
 			r.Clear()
 
@@ -214,7 +213,7 @@ func (r *Room) WhiteChessDown(c *ws.Connection, m *msg.Common) {
 			if  err != nil {
 				fmt.Println(err)
 			}
-			app.WebSocket().Broadcast([]byte(res),nil)
+			ego.WebsocketServer().Broadcast([]byte(res),nil)
 			r.GameOver()
 			r.Clear()
 		}

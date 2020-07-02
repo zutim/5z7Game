@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>后台登录</title>
+    <base href="<?php echo RES_URL ?>"/>
+    <meta name="viewport" content="width=device-width">
+    <link href="/html/static/js/login/css/base.css" rel="stylesheet" type="text/css">
+    <link href="/html/static/js/login/css/login.css" rel="stylesheet" type="text/css">
+    <script src="/html/static/js/jquery/jquery.min.js"></script>
+    <link href="/html/static/js/layui-v2.3.0/css/layui.css" rel="stylesheet">
+    <script src="/html/static/js/layui-v2.3.0/layui.all.js"></script>
+    <style>
+        #main{background: url("/res/images/login/bg2.jpg") no-repeat; background-size: 100% 100%;}
+        .bg{width: 100%;height: 100%;position: fixed;left: 0;top:0;background: url("/res/images/login/tile.png") repeat;}
+        .login{ z-index: 9999; }
+        .qrcode-box{position: relative;width: 200px;padding: 20px 0px;margin: auto;padding-top: 50px; }
+        .qrcode-box .title{text-align: center;line-height: 30px;}
+        .qrcode-box .qrcode{ width: 160px;height: 160px;margin: auto; }
+        .qrcode-box .qrcode img{ width: 160px;height: 160px; }
+        .qrcode-box .tip{ line-height: 30px;text-align: center;font-size: 14px;padding-top: 10px; }
+        .qrcode-box .tip.c{ color: #f6f6f6; }
+        .tab{ position: absolute;right:10px;bottom: 0;display: inline-block; line-height: 40px;cursor: pointer;color: #b6b6b6;}
+        .tab:hover{ text-decoration: underline;color: #fff;}
+    </style>
+</head>
+<body>
+<div id="main">
+    <div class="bg"></div>
+    <div class="login">
+        <div class="logo-name">车保无忧</div>
+        <div class="line5"></div>
+        <div class="caption">
+            <div></div>
+            <div></div>
+            <span>车主购平台</span>
+        </div>
+        <div class="account-box" style="">
+            <div class="line20"></div>
+            <div class="line15"></div>
+            <div class="txt">
+                <input type="text" value="" id="account" placeholder="请输入账号"/>
+            </div>
+            <div class="line15"></div>
+            <div class="txt">
+                <input type="password" value="" id="pwd" placeholder="请输入密码"/>
+            </div>
+            <div class="line5"></div>
+            <div class="line5"></div>
+            <div class="tip" id="tip"></div>
+            <div class="line20"></div>
+            <div class="btn">
+                <div onclick="app.login()">登录</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="copy"><span>© 2020 All Rights Reserved.</span></div>
+</div>
+</body>
+</html>
+<script>
+    var tabIndex = 0;
+    var app = {
+        init: function () {
+            // $("input").keyup(function () {
+            //     app.tip('');
+            // });
+            // this.pip();
+        },
+        login: function () {
+            var pdata = {
+                username: $("#account").val(),
+                password: $("#pwd").val(),
+            };
+            pdata =JSON.stringify(pdata);
+            $.post("/v1/public/user/auth", pdata,
+                function (res) {
+                if (res.flag) {
+                    app.tip('登录成功');
+                    setTimeout(function () {
+                        location.href = "";
+                    }, 1800)
+                } else
+                    app.tip(res.msg);
+            }, "json");
+        },
+        tip: function (msg) {
+            $("#tip").html(msg);
+        },
+        flag:false,
+        pip:function () {
+            $.ajax({
+                type: "POST",
+                url: "",
+                data: { },
+                dataType: "json",
+                success: function(d){
+                    if(d.flag)
+                    {
+                        app.flag = true;
+                        $("#qtip").html('登录成功');
+                        $("#qtip").addClass('c');
+                        setTimeout(function () {
+                            location.href = "";
+                        }, 1800)
+                    }else
+                        if(d.msg!='')
+                            layer.msg(d.msg);
+                },
+                complete:function () {
+                    setTimeout(function () {
+                        if (!app.flag)
+                            app.pip();
+                    }, 1000)
+                }
+            });
+        },
+        tab:function (e) {
+            var accountBox = $(".account-box");
+            var qrcodeBox = $(".qrcode-box");
+            if(tabIndex==0){
+                accountBox.show();
+                qrcodeBox.hide();
+                $(e).html('门店管理员扫码登录');
+                tabIndex = 1;
+            }else
+            {
+                accountBox.hide();
+                qrcodeBox.show();
+                tabIndex = 0;
+                $(e).html('管理员登录');
+            }
+
+        }
+    };
+
+    app.init();
+</script>

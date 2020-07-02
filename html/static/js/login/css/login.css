@@ -1,0 +1,26 @@
+#bg {position: fixed;top: 0;left: 0;width: 100%;height: 100%;z-index: -1;}
+#bg canvas { position: absolute; top: 0;left: 0;width: 100%; height: 100%;}
+body{font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;background-color: #0F769F;}
+#main{position: fixed;width: 100%;height: 100%;left: 0px;top:0px;justify-content:center;align-items:center;display:-webkit-flex;z-index: 1000;}
+#main .login{width: 300px;height: 400px;padding: 20px;background-color: rgba(0, 0, 0, 0.69);border-radius: 4px;}
+input{font-size: 18px;color: #4d4d4d;}
+input::-webkit-input-placeholder{color: #bbbbbb;}
+.login{color: #fff;position: relative;z-index: 20000;}
+.line5{height: 5px;clear: both;}
+.line20{height: 20px;clear: both;}
+.line15{height: 15px;clear: both;}
+.logo-name{text-align: center;height: 60px;line-height: 60px;font-size: 30px;font-weight: bold;color: #fff;letter-spacing: 10px;}
+.caption{height: 30px;position: relative;text-align: center;line-height: 30px;}
+.caption div{width: 80px;height: 1px;background-color: #8e8e8e;position: absolute;left: 0px;top:14px;}
+.caption div:nth-child(2){left:auto;right: 0px;}
+.caption span{display: inline-block;height: 30px;font-size: 18px;color: #f6f6f6;}
+.txt{height: 40px;padding-right: 22px;}
+.txt input{width: 100%;height: 38px;padding: 0px 10px;border: 1px solid #bdbdbd;}
+.code{height: 40px;position: relative;}
+.code input{width: 170px;height: 38px;padding: 0px 10px;border: 1px solid #bdbdbd;position: absolute;left: 0px;top:0px;}
+.code img{width: 95px;height: 38px;position: absolute;top:0px;right: 0px;border: 1px solid #bdbdbd;cursor: pointer;}
+.tip{height: 20px;line-height: 20px;color: #fff;font-size: 14px;}
+.btn{height: 46px;width: 100%;}
+.btn div{height: 46px;text-align: center;background-color: #2e457c;color: #fff;line-height: 46px;font-size: 20px;font-weight: bold;cursor: pointer;}
+.copy{text-align: center;line-height: 30px; height: 30px;position: fixed;width: 100%;bottom: 0px;z-index: 100;}
+.copy span{color: #bbbbbb;}

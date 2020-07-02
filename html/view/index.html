@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+<head>
+    <meta charset="utf-8"/>
+    <title>五子棋</title>
+    <style type='text/css'>
+        canvas {
+            display: block;
+            margin: 50px auto;
+            box-shadow: -2px -2px 2px #efefef, 5px 5px 5px #b9b9b9;
+            cursor: pointer;
+        }
+
+        .btn-wrap {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+
+        .btn-wrap div {
+            margin: 0 10px;
+        }
+
+        div > span {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #EE82EE;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        div.unable span {
+            background: #D6D6D4;
+            color: #adacaa;
+        }
+
+        #result-wrap {
+            text-align: center;
+        }
+
+
+    </style>
+</head>
+<body>
+<h3 id="result-wrap">--益智五子棋--</h3>
+<canvas style="display: none" id="chess" width="350px" height="350px"></canvas>
+<div class="btn-wrap" id="mask_one">
+    <div id='netBattle' class="restart">
+        <span>网络对战</span>
+    </div>
+    <div id='singleBattle' class="restart">
+        <span>单机游玩</span>
+    </div>
+</div>
+<div class="btn-wrap" id="singleBattleBoard" style="display: none">
+    <div id='restart' class="restart">
+        <span>重新开始</span>
+    </div>
+    <div id='goback' class="goback unable">
+        <span>悔棋</span>
+    </div>
+    <div id='return' class="return unable">
+        <span>撤销悔棋</span>
+    </div>
+</div>
+<div class="btn-wrap" id="netBattleBoard" style="display: none">
+    <div>
+        <span style="background-color: #D6D6D4;margin: 0">
+            <span id="info1">等待其他玩家匹配连接：</span>
+        <span id="info2">.</span>
+        </span>
+
+    </div>
+    <div id='surrender' class="goback">
+       <span style="background-color: #D6D6D4;margin: 0">
+            <span id="info3">计时器：</span>
+        <span id="info4">15</span>
+        </span>
+    </div>
+
+</div>
+<audio id='sound' style="display: none" src=''></audio>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+    var chessWidth=500;
+    var deviceWidth = document.documentElement.clientWidth;
+    if(deviceWidth<500){
+        chessWidth = deviceWidth-40;
+    }
+
+    $("#chess").attr("width",chessWidth);
+    $("#chess").attr("height",chessWidth);
+    var wi = (chessWidth-15)/29;
+
+
+    var page_text={  //页面元素
+        info1:$("#info1")[0],
+        info2:$("#info2")[0],
+        info3:$("#info3")[0],
+        info4:$("#info4")[0],
+        title:$("#result-wrap")[0],
+        resultTxt:$("#result-wrap")[0],
+        restart:$("restart"),
+        backbtn:$("#goback")[0],
+        returnbtn:$("#return")[0],
+        init:function () {
+            this.restart.onclick=function () {
+                window.location.reload();
+            }
+        },
+        log:function (x) {
+            console.log(x)
+        },
+        setmsg:function (t1,t2) {
+            this.info1.innerText = t1;
+            this.info2.innerText = t2;
+        }
+    };
+
+    var game={ //游戏相关
+        flag:"",
+        over:true,
+        me:true,
+        _nowi:0,
+        _nowj:0,
+        _compi:0,
+        _compj:0,
+        _myWin:[],
+        _compWin:[],
+        backAble:false,
+        returnAble:false,
+        role:"",
+        nowTurn:"",
+        myWin:[],
+        computerWin:[],
+        init:function () {
+
+        }
+    };
+
+    var voice = {
+        init:function(){
+            this.sound = $("#sound")[0];
+        },
+        sound:"",
+        start:function (type) {
+            this.sound.src=type+'.mp3';
+            this.sound.play();
+        }
+    };
+
+    var time={
+        wait:function () {
+            return setInterval(function () {
+                if (page_text.info2.innerText.length > 5) {
+                    page_text.info2.innerText = "."
+                } else {
+                    page_text.info2.innerText += "."
+                }
+            }, 800)
+        },
+        netwait:function(){
+            return setInterval(function () {
+                if (page_text.info4.innerText.length > 5) {
+                    page_text.info4.innerText = "."
+                } else {
+                    page_text.info4.innerText += "."
+                }
+            }, 800)
+        },
+        init(){
+            page_text.info4.innerText = 16;
+            page_text.info4.style.color = "black";
+            let t =  setInterval(function () {
+                if (page_text.info4.innerText >= 0) {
+                    page_text.info4.innerText -= 1
+                }else {
+                    time.timerStop(t)
+                }
+            }, 1000);
+            return t
+        },
+        rest:function () {
+            page_text.info4.innerText = 15;
+        },
+        timer:function (i) {
+            setmsg("计时器", i);
+            let s = setInterval(function () {
+                tmp = parseInt(page_text.info2.innerText) - 1;
+                if (tmp === 0) {
+                    time.timerStop(s)
+                }
+                page_text.info2.innerText = parseInt(page_text.info2.innerText) - 1;
+            }, 1000)
+        },
+        timerStop:function (t) {
+            clearInterval(t);
+        }
+    };
+
+    var chessBoard ={ //棋盘
+        data:[],
+        chess:{},
+        context:{},
+        init:function () {
+            for (var i = 0; i < 15; i++) {
+                this.data[i] = [];
+                for (var j = 0; j < 15; j++) {
+                    this.data[i][j] = 0;
+                }
+            }
+            this.chess = document.getElementById("chess");//$("#chess")[0]; //获取dom元素
+            this.context = this.chess.getContext('2d');
+            this.context.strokeStyle = '#bfbfbf'; //边框颜色
+            this.drawChessBoard(); //绘画棋盘
+        },
+        drawChessBoard:function(){
+            for (var i = 0; i < 15; i++) {
+                this.context.moveTo(wi + i * 2*wi, wi);
+                this.context.lineTo(wi + i * 2*wi, wi+14*2*wi);
+                this.context.stroke();
+                this.context.moveTo(wi, wi + i * 2*wi);
+                this.context.lineTo(wi+14*2*wi, wi + i * 2*wi);
+                this.context.stroke();
+            }
+        },
+        oneStep:function(i, j, me){ //画棋子
+            console.log(i,j)
+            console.log(me)
+            this.context.beginPath();
+            this.context.arc(wi + i * 2*wi, wi + j * 2*wi, wi-2, 0, 2 * Math.PI);// 画圆
+            this.context.closePath();
+            //渐变
+            var gradient = this.context.createRadialGradient(wi + i * 2*wi + 2, wi + j * 2*wi - 2, wi-2, wi + i * wi*2 + 2, wi + j * wi*2 - 2, 0);
+
+            if (me) {
+                gradient.addColorStop(0, '#0a0a0a');
+                gradient.addColorStop(1, '#636766');
+            } else {
+                gradient.addColorStop(0, '#d1d1d1');
+                gradient.addColorStop(1, '#f9f9f9');
+            }
+            this.context.fillStyle = gradient;
+            this.context.fill();
+        },
+        minusStep:function(i,j){ //销毁棋子
+            //擦除该圆
+            this.context.clearRect((i) * 30, (j) * 30, 30, 30);
+            // 重画该圆周围的格子
+            this.context.beginPath();
+            this.context.moveTo(15 + i * 30, j * 30);
+            this.context.lineTo(15 + i * 30, j * 30 + 30);
+            this.context.moveTo(i * 30, j * 30 + 15);
+            this.context.lineTo((i + 1) * 30, j * 30 + 15);
+            this.context.stroke();
+        },
+    };
+
+    var wins = { //赢法数组
+        data:[],
+        count:0,
+        init:function () {
+            for (var i = 0; i < 15; i++) {
+                this.data[i] = [];
+                for (var j = 0; j < 15; j++) {
+                    this.data[i][j] = [];
+                }
+            }
+
+            //横线赢法
+            for (var i = 0; i < 15; i++) {
+                for (var j = 0; j < 11; j++) {
+                    for (var k = 0; k < 5; k++) {
+                        this.data[i][j + k][this.count] = true;
+                    }
+                    this.count++;
+                }
+            }
+            //竖线赢法
+            for (var i = 0; i < 15; i++) {
+                for (var j = 0; j < 11; j++) {
+                    for (var k = 0; k < 5; k++) {
+                        this.data[j + k][i][this.count] = true;
+                    }
+                    this.count++;
+                }
+            }
+            //正斜线赢法
+            for (var i = 0; i < 11; i++) {
+                for (var j = 0; j < 11; j++) {
+                    for (var k = 0; k < 5; k++) {
+                        this.data[i + k][j + k][this.count] = true;
+                    }
+                    this.count++;
+                }
+            }
+            //反斜线赢法
+            for (var i = 0; i < 11; i++) {
+                for (var j = 14; j > 3; j--) {
+                    for (var k = 0; k < 5; k++) {
+                        this.data[i + k][j - k][this.count] = true;
+                    }
+                    this.count++;
+                }
+            }
+
+            // debugger;初始化赢的概率
+            for (var i = 0; i < wins.count; i++) {
+                game.myWin[i] = 0;
+                game._myWin[i] = 0;
+                game.computerWin[i] = 0;
+                game._compWin[i] = 0;
+            }
+        }
+    };
+
+    var singleBattle={
+        data:'',
+        init:function () {
+            this.data = $("#singleBattle")[0];
+            this.data.onclick=function (t) {
+                document.getElementById("mask_one").style.display = "none";
+                document.getElementById("chess").style.display = "block";
+                document.getElementById("singleBattleBoard").style.display = "flex";
+                chessBoard.drawChessBoard();
+                game.over = false;
+            };
+            var computerAI = function () {
+                var myScore = [];
+                var computerScore = [];
+                var max = 0;
+                var u = 0, v = 0;
+                for (var i = 0; i < 15; i++) {
+                    myScore[i] = [];
+                    computerScore[i] = [];
+                    for (var j = 0; j < 15; j++) {
+                        myScore[i][j] = 0;
+                        computerScore[i][j] = 0;
+                    }
+                }
+                for (var i = 0; i < 15; i++) {
+                    for (var j = 0; j < 15; j++) {
+                        if (chessBoard.data[i][j] == 0) {
+                            for (var k = 0; k < wins.count; k++) {
+                                if (wins.data[i][j][k]) {
+                                    if (game.myWin[k] == 1) {
+                                        myScore[i][j] += 200;
+                                    } else if (game.myWin[k] == 2) {
+                                        myScore[i][j] += 400;
+                                    } else if (game.myWin[k] == 3) {
+                                        myScore[i][j] += 2000;
+                                    } else if (game.myWin[k] == 4) {
+                                        myScore[i][j] += 10000;
+                                    }
+
+                                    if (game.computerWin[k] == 1) {
+                                        computerScore[i][j] += 220;
+                                    } else if (game.computerWin[k] == 2) {
+                                        computerScore[i][j] += 420;
+                                    } else if (game.computerWin[k] == 3) {
+                                        computerScore[i][j] += 2100;
+                                    } else if (game.computerWin[k] == 4) {
+                                        computerScore[i][j] += 20000;
+                                    }
+                                }
+                            }
+                            if (myScore[i][j] > max) {
+                                max = myScore[i][j];
+                                u = i;
+                                v = j;
+                            } else if (myScore[i][j] == max) {
+                                if (computerScore[i][j] > computerScore[u][v]) {
+                                    u = i;
+                                    v = j;
+                                }
+                            }
+
+                            if (computerScore[i][j] > max) {
+                                max = computerScore[i][j];
+                                u = i;
+                                v = j;
+                            } else if (computerScore[i][j] == max) {
+                                if (myScore[i][j] > myScore[u][v]) {
+                                    u = i;
+                                    v = j;
+                                }
+                            }
+
+                        }
+                    }
+                }
+                game._compi = u;
+                game._compj = v;
+                setTimeout(function () {
+                    chessBoard.oneStep(u, v, false);
+                    chessBoard.data[u][v] = 2;  //计算机占据位置
+                    for (var k = 0; k < wins.count; k++) {
+                        if (wins.data[u][v][k]) {
+                            game.computerWin[k]++;
+                            game._myWin[k] = game.myWin[k];
+                            game.myWin[k] = 6;//这个位置对方不可能赢了
+                            if (game.computerWin[k] === 5) {
+                                page_text.resultTxt.innerHTML = 'o(╯□╰)o，计算机赢了，继续加油哦！';
+                                game.over = true;
+                            }
+                        }
+                    }
+                    if (!game.over) {
+                        game.me = !game.me;
+                    }
+                    game.backAble = true;
+                    game.returnAble = false;
+                    var hasClass = new RegExp('unable').test(' ' + page_text.returnbtn.className + ' ');
+                    if (!hasClass) {
+                        page_text.returnbtn.className += ' ' + 'unable';
+                    }
+                }, 800);
+
+            };
+            chessBoard.chess.onclick = function (e) {
+                if (game.over) {
+                    return;
+                }
+                if (!game.me) {
+                    return;
+                }
+                // 悔棋功能可用
+                page_text.backbtn.className = page_text.backbtn.className.replace(new RegExp("(\\s|^)unable(\\s|$)"), " ");
+                var x = e.offsetX;
+                var y = e.offsetY;
+                var i = Math.floor(x / (2*wi));
+                var j = Math.floor(y / (2*wi));
+                game._nowi = i;
+                game._nowj = j;
+                if (chessBoard.data[i][j] === 0) {
+                    chessBoard.oneStep(i, j, game.me);
+                    chessBoard.data[i][j] = 1; //我，已占位置
+
+                    for (var k = 0; k < wins.count; k++) { // 将可能赢的情况都加1
+                        if (wins.data[i][j][k]) {
+                            // debugger;
+                            game.myWin[k]++;
+                            game._compWin[k] = game.computerWin[k];
+                            game.computerWin[k] = 6;//这个位置对方不可能赢了
+                            if (game.myWin[k] === 5) {
+                                // window.alert('你赢了');
+                                page_text.resultTxt.innerHTML = '恭喜，你赢了！';
+                                game.over = true;
+                            }
+                        }
+                    }
+
+                    if (!game.over) {
+                        game.me = !game.me;
+                        computerAI();
+                    }
+                }
+            };
+            // 悔棋
+            page_text.backbtn.onclick = function (e) {
+                if (!game.backAble) {
+                    return;
+                }
+                game.over = false;
+                game.me = true;
+                // resultTxt.innerHTML = 'o(╯□╰)o，悔棋中';
+                // 撤销悔棋功能可用
+                page_text.returnbtn.className = page_text.returnbtn.className.replace(new RegExp("(\\s|^)unable(\\s|$)"), " ");
+                // 我，悔棋
+                chessBoard[game._nowi][game._nowj] = 0; //我，已占位置 还原
+                minusStep(game._nowi, game._nowj); //销毁棋子
+                for (var k = 0; k < wins.count; k++) { // 将可能赢的情况都减1
+                    if (wins[game._nowi][game._nowj][k]) {
+                        game.myWin[k]--;
+                        game.computerWin[k] = game._compWin[k];//这个位置对方可能赢
+                    }
+                }
+
+                // 计算机相应的悔棋
+                chessBoard[game._compi][game._compj] = 0; //计算机，已占位置 还原
+                minusStep(game._compi, game._compj); //销毁棋子
+                for (var k = 0; k < wins.count; k++) { // 将可能赢的情况都减1
+                    if (wins[game._compi][game._compj][k]) {
+                        game.computerWin[k]--;
+                        game.myWin[k] = game._myWin[i];//这个位置对方可能赢
+                    }
+                }
+                page_text.resultTxt.innerHTML = '--益智五子棋--';
+                game.returnAble = true;
+                game.backAble = false;
+            }
+            // 撤销悔棋
+            page_text.returnbtn.onclick = function (e) {
+                if (!game.returnAble) {
+                    return;
+                }
+                // 我，撤销悔棋
+                chessBoard[game._nowi][game._nowj] = 1; //我，已占位置
+                oneStep(game._nowi, game._nowj, game.me);
+                for (var k = 0; k < wins.count; k++) {
+                    if (wins[game._nowi][game._nowj][k]) {
+                        game.myWin[k]++;
+                        game._compWin[k] = game.computerWin[k];
+                        game.computerWin[k] = 6;//这个位置对方不可能赢
+                    }
+                    if (myWin[k] == 5) {
+                        resultTxt.innerHTML = '恭喜，你赢了！';
+                        over = true;
+                    }
+                }
+
+                // 计算机撤销相应的悔棋
+                chessBoard[_compi][_compj] = 2; //计算机，已占位置
+                oneStep(_compi, _compj, false);
+                for (var k = 0; k < count; k++) { // 将可能赢的情况都减1
+                    if (wins[_compi][_compj][k]) {
+                        computerWin[k]++;
+                        _myWin[k] = myWin[k];
+                        myWin[k] = 6;//这个位置对方不可能赢
+                    }
+                    if (computerWin[k] == 5) {
+                        resultTxt.innerHTML = 'o(╯□╰)o，计算机赢了，继续加油哦！';
+                        over = true;
+                    }
+                }
+                page_text.returnbtn.className += ' ' + 'unable';
+                returnAble = false;
+                backAble = true;
+            }
+        },
+    };
+
+    app = {
+        init:function () {
+            page_text.init();
+            game.init();
+            voice.init();
+            wins.init();
+            chessBoard.init();
+            singleBattle.init();
+            netBattle.init();
+        }
+    };
+
+</script>
+
+<script>
+    var netBattle={
+        data:'',
+        init:function () {
+            this.data = $("#netBattle")[0];
+            this.data.onclick=function () {
+                document.getElementById("mask_one").style.display = "none";
+                document.getElementById("chess").style.display = "block";
+                document.getElementById("netBattleBoard").style.display = "flex";
+                page_text.title.innerText = "网络对战准备中";
+                netBattle.initNetBattle();
+                chessBoard.drawChessBoard();
+                netManager.waiting = time.wait();
+            }
+        },
+        initNetBattle:function () {
+            let url = "localhost:8080/ws";
+            let ws = new WebSocket("ws://" + url,['Sec-WebSocket-Protocol']);
+            netManager.init(ws);
+            webServer.ws.onopen = function(evt){
+                netManager.ready()
+            };
+
+            webServer.ws.onmessage = function (evt) {//绑定收到消息事件
+                netManager.msgHandler(evt.data)
+            };
+
+            ws.onclose = function (evt) { //绑定关闭或断开连接事件
+                page_text.log("Connection closed.");
+            };
+            ws.onerror = function (e) {
+                timerStop(netManager.waiting);
+                setmsg("错误:", "无法连接ws")
+            }
+        }
+    };
+
+    var netManager = {
+        role:'',
+        roleName:"",
+        roleMark:0,
+        nowTurn:"",
+        over:true,
+        opponentMark:0,
+        timer:0,
+        waiting:'',
+        msg:{
+            op: "",
+            args: "",
+            msg: "",
+            msgType: "",
+            flagId: 0,
+        },
+        init:function (ws) {
+            webServer.ws=ws;
+        },
+        ready:function(){
+            let x = this.msg;
+            x.op = "game_initClientStatus";
+            webServer.msgSender(x)
+        },
+        msgHandler:function (x) {
+            let m = webServer.decode(x);
+            let op = m.op;
+            op = op.split("_",2);
+            m.op = op[1];
+            switch (op[0]) {
+                case "game":
+                    this.msgReceiveGameHandler(m);
+                    break;
+                case "server":
+                    break;
+            }
+        },
+        msgReceiveGameHandler:function (x) {
+            switch (x.op) {
+                case "chessDown":
+                    let tmp = webServer.decode(x.msg);
+                    this.opponentChessDown(tmp.i, tmp.j);
+                    time.rest();
+                    break;
+                case "role":
+                    this.role = x.args;
+                    this.roleMark = parseInt(x.msg);
+                    this.opponentMark =  this.roleMark === 1 ? 2:1;
+                    break;
+                case "start":
+                    this.over = false;
+                    this.nowTurn = x.msg;
+                    this.roleName = this.blackWhite(this.role);
+                    page_text.title.innerText = "你是 " + this.roleName + ",对局进行中";
+                    this.roleChessDown();
+                    time.timerStop(netManager.waiting);
+                    this.setTurnInfo();
+                    this.timer = time.init();
+                    voice.start('v');
+                    break;
+                case "over":
+                    this.over = true;
+                    let head ="";
+                    head += "你是["+this.roleName+"],对局结束!";
+                    if(x.msgType === "disconnect"){
+                        head += "对手断开连接了！"
+                    }
+                    if(x.msgType === "timeout"){
+                        head += "超时未落子！ "
+                    }
+                    page_text.title.innerText = head+ this.blackWhite(x.msg) +"获胜！";
+                    time.timerStop();
+                    time.timerStop(this.timer);
+                    webServer.ws.close();//关闭连接
+                    page_text.setmsg("点击：","再来一局！");
+                    document.getElementById("netBattleBoard").onclick = function () {
+                        window.location.reload();
+                    };
+                    voice.start('v');
+                    break;
+            }
+        },
+        opponentChessDown:function (i,j) {
+            chessBoard.oneStep(i, j, !this.chess.color());
+            chessBoard.data[i][j] = this.roleMark;
+            this.changeTurn();
+            this.setTurnInfo();
+            this.chess.downSound()
+        },
+        chess: {
+            color:function () {
+                return netManager.role === "black";
+            },
+            downSound:function () {
+                voice.start(this.nowTurn);
+            }
+        },
+        roleChessDown:function(){
+            let t = this;
+            page_text.log(t);
+            chessBoard.chess.onclick = function (e) {
+                if (t.over) {
+                    return;
+                }
+                if (t.role !== t.nowTurn) {
+                    return;
+                }
+
+                var x = e.offsetX;
+                var y = e.offsetY;
+                var i = Math.floor(x / 30);
+                var j = Math.floor(y / 30);
+                if (chessBoard.data[i][j] === 0) {
+                    chessBoard.oneStep(i, j, t.chess.color());
+                    // chessBoard.oneStep(i, j, true);
+                    chessBoard.data[i][j] = this.roleMark; //我，已占位置
+                    webServer.msgSender(t.msgChessDown(i,j)); //发送我下的位置
+                    t.changeTurn();
+                    t.setTurnInfo();
+                    time.rest();
+                    t.chess.downSound()
+                }
+            };
+        },
+        msgChessDown:function (i,j) {
+            let t = this.msg;
+            t.op = "game_chessDown";
+            t.msgType = "chessDown";
+            t.msg = webServer.encode({"i": i, "j": j});
+            return t
+        },
+        blackWhite:function (x) {
+            return x === "black" ? "黑方" : "白方";
+        },
+        changeTurn:function () { // 切换对手
+            this.nowTurn = this.nowTurn === "black"?'white':'black';
+        },
+        setTurnInfo:function () {
+            page_text.info2.style.color="red";
+            page_text.setmsg("当前回合:",this.blackWhite(this.nowTurn))
+        }
+    };
+
+
+    var webServer = {
+        ws:'',
+        msgSender:function (x) {
+            this.ws.send(JSON.stringify(x));
+        },
+        encode:function (x) {
+            return JSON.stringify(x);
+        },
+        decode:function (x) {
+            page_text.log(x);
+            return JSON.parse(x);
+        }
+    };
+
+    app.init();
+</script>
+</body>
+</html>

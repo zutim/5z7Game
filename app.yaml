@@ -4,5 +4,10 @@ server:
 
 db:
   driver: mysql
+  dbNameKey: wuziqi
+  dbHostKey: localhost
+  dbPortKey: 3306
+  dbUserKey: root
+  dbPassKey: 123456
 
 redis:

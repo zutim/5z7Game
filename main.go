@@ -3,29 +3,33 @@ package main
 import (
 	"5z7Game/config"
 	"5z7Game/http/route"
-	"5z7Game/pkg/utils"
-	"5z7Game/pkg/validator"
-	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"strconv"
+	"fmt"
+	"github.com/ebar-go/ego"
+	"github.com/ebar-go/ego/app"
+	"github.com/ebar-go/ego/component/event"
+	"github.com/ebar-go/ego/utils/secure"
 )
 
 func init()  {
-	// 加载配置，错误则panic
-	utils.SecurePanic(config.ReadFromFile("./app.yaml"))
+	// 加载配置
+	secure.Panic(config.ReadFromFile("app.yaml"))
 
+	// 初始化数据库
+	secure.Panic(app.InitDB())
+
+	// 支持停止http服务时的回调
+	event.Listen(event.BeforeHttpShutdown, func(ev event.Event) {
+		// 关闭数据库
+		fmt.Println("close database")
+		_ = app.DB().Close()
+	})
 
 }
 
 func main() {
-	// 指定自定义的validator
-	binding.Validator = new(validator.Validator)
+	s := ego.HttpServer()
 
-	router := gin.Default()
+	route.Load(s.Router)
 
-	route.Load(router)
-
-	// go task.Run()
-
-	_ = router.Run(":" + strconv.Itoa(config.Server().Port))
+	secure.Panic(s.Start())
 }

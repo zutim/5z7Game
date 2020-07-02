@@ -1,0 +1,85 @@
+﻿body{background: url("../images/001.png") repeat;font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;}
+.layui-card-header{ border-bottom-color: #c4c4c4; }
+#main{padding: 0px;}
+.header{height: 50px;background-color: #fff;position: fixed;width: 100%;top:0px;z-index: 2000;box-shadow: 0px 0px 2px #5c5c5c;}
+.header .logo{ height: 30px;padding-top: 10px;  }
+.header .logo img{ height: 30px;  }
+.header .menu{}
+.header .menu ul li{float: left;padding: 0px 10px;height: 40px;line-height: 40px;color: #cecece;}
+.header .menu ul li a{ color: #5d5d5d; }
+.header .menu ul li a:hover{ color: #0F769F; }
+.header .menu ul li a.cur{ color: #0F769F; }
+.header .attr{width: auto;height: 40px;position: absolute;top:5px;right: 10px;line-height: 40px;color: #5d5d5d;text-align: right;}
+.header .attr a{cursor: pointer;padding-left: 10px;color: #0F769F;}
+.header .attr div{width: 30px;height: 30px;border-radius: 100%; position: absolute; background: url("../images/002.jpg") no-repeat;background-size: 100% 100%;left: 0px;top:5px;}
+
+.content{}
+.max-w{ width: 80%;min-width: 1300px; margin: auto;position: relative;}
+
+.layui-card-header{position: relative;}
+.layui-card-header .title{font-size: 15px;font-weight: bold;color: #727272;}
+.layui-card-header .btns{height: 43px;position: absolute;right: 10px;top:0px;}
+.layui-card-header .btns a:hover{color: #0F769F;}
+.layui-card-header .select{height: 38px;position: absolute;right: 10px;top:2px;}
+
+.crumb{}
+.crumb ul li{display: inline-block;height: 42px;float: left;padding-right: 10px;font-size: 14px;}
+.crumb ul li.item{}
+.crumb ul li.item a{color: #7f7f7f;}
+.crumb ul li.item a:hover{color: #0F769F;}
+
+/*搜索*/
+.search-row{border-top: 1px solid #eee;position: relative;padding-bottom: 20px;}
+.search-row .item{clear: both;border-bottom: 1px solid #eee;min-height: 38px; border-right: 1px solid #eee;}
+.search-row .item .row{float: left;width: 100%;}
+.search-row .item .row .box{padding-left: 120px;min-height: 38px;position: relative;}
+.search-row .item .row .box span.title{border-left: 1px solid #eee;border-right: 1px solid #eee;display: block;width: 120px;height: 100%;line-height: 38px; position: absolute;left: 0px;top:0px;text-align: right;background-color: #f9f9f9;}
+.search-row .item .row .box div.txt{height: 30px;padding-left: 5px;padding-top: 4px; padding-right: 17px;}
+.search-row .item .row .box div.min{width: 140px;float: left;margin-right: 15px;}
+.search-row .item .row .box div.txt input{width: 100%;height: 28px;font-size:12px;border: 1px solid #eee;padding: 0px 5px;}
+.search-row .item .row .box div.txt select{width: 100%;height: 30px;font-size:12px;border: 1px solid #eee;padding: 0px 5px;}
+
+.search-row .item .row .box .area{height: 30px;padding-left: 5px;padding-top: 4px;}
+.search-row .item .row .box .area .layui-input-inline{width: 120px;margin-right: 10px;}
+.search-row .item .row .box .area .layui-form-select .layui-input{height: 30px;border-color: #eee;}
+
+.search-row .item.hide{display: none;}
+
+.search-row .item .row .box div.list{padding-bottom: 7px;padding-left: 5px;overflow: hidden;}
+.search-row .item .row .box div.list ul li{float: left;padding-right: 10px;padding-top: 7px;}
+.search-row .item .row .box div.list ul li span{cursor: pointer;color: #53535b; display: inline-block;height: 24px;line-height: 24px;padding: 0px 10px;}
+.search-row .item .row .box div.list ul li span:hover{color: red;}
+.search-row .item .row .box div.list ul li.cur span{color: red;}
+
+.search-row .item .row .btn{height: 30px;padding: 4px 0px;}
+.search-row .updown{text-align: center;width:100%;height: 20px;position: absolute;left: 0px;bottom: 4px;}
+.search-row .updown span{display: inline-block;color: #919191; height: 20px;line-height: 20px;font-size: 12px;cursor: pointer; padding: 0px 15px;background-color: #fff;border: 1px solid #eee;border-top-width: 0px;background-color: #fff;}
+.search-row .updown span{border-bottom-left-radius: 3px;border-bottom-right-radius: 3px;}
+.search-row .updown span i{padding-left: 4px;}
+.search-row .updown span.m{display: none;}
+.search-row .updown.more span{display: none}
+.search-row .updown.more span.m{display: inline-block}
+
+
+.upload-images-box{}
+.upload-images-box ul li{width: 120px;height: 120px;padding-right: 10px;float: left;padding-bottom: 10px;}
+.upload-images-box .item > div{width: 100px;height: 100px;position: relative;padding: 9px;border: 1px dashed #d5d5d5;}
+.upload-images-box .item > div table{width: 100%;}
+.upload-images-box .item > div table tr td{width: 100%;cursor: pointer; height: 100px;text-align: center;vertical-align: middle;}
+.upload-images-box .item > div table tr td img{max-width: 100px;max-height: 100px;}
+.upload-images-box .item > div .ico{ cursor: pointer; position: absolute;right: 1px;bottom: 1px; width: 20px;height: 20px;display: none;text-align: center;line-height: 20px;font-size: 12px;color: #8c8c8c;}
+.upload-images-box .item > div .ico.view{ right: 26px; }
+.upload-images-box .item > div:hover{border: 1px dashed #009688;}
+.upload-images-box .item > div:hover .ico{display: inline-block;}
+.upload-images-box .item > div .ico:hover{background-color: #eee;color: red;}
+.upload-images-box .file{height: auto;width: auto;}
+.upload-images-box .file > div{ display: inline-block;width: auto;height: 20px;line-height: 20px; }
+.upload-images-box .file > div .ico{bottom:9px; right: 9px; background-color: #0C0C0C;color: #fff;}
+.upload-images-box .file > div .ico.view{bottom:9px; right: 35px; }
+
+.upload-images-box .add{width: 120px;height: 120px;}
+.upload-images-box .add > div{width: 118px;height: 58px;border: 1px dashed #d5d5d5;cursor: pointer; padding-top: 60px;  position: relative;text-align: center;}
+.upload-images-box .add > div i{font-size: 36px;color: #bdbdbd; display: block;width: 100%;height: 60px;position: absolute;left: 0px;top:15px;line-height: 60px;text-align: center;}
+.upload-images-box .add > div span{line-height: 50px;font-size: 14px;color: #8c8c8c;}
+.upload-images-box .add > div:hover{border-color: #009688;}
+.upload-images-box .add > div:hover i{color: #009688;}

@@ -26,6 +26,9 @@ func (database *Database) connect(dsn string) (err error) {
 func DB() *gorm.DB {
 	dbPool.once.Do(func() {
 		utils.SecurePanic(dbPool.connect(config.Mysql().Dsn()))
+		//con := dbPool.connect(config.Mysql().Dsn())
+		//fmt.Println(con)
+		//utils.SecurePanic(con)
 	})
 	return dbPool.instance
 }

@@ -6,6 +6,7 @@ import (
 	"5z7Game/pkg/utils"
 	"fmt"
 	"github.com/ebar-go/ego/app"
+	"github.com/ebar-go/ego/utils/secure"
 	"github.com/ebar-go/ws"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -14,6 +15,21 @@ import (
 
 
 func WebsocketHandler(ctx *gin.Context)  {
+	conn, err := ws.UpgradeConn(ctx.Writer, ctx.Request)
+	if err != nil {
+		secure.Panic(err)
+	}
+
+	ws.Register(conn, func(message []byte){
+		if string(message) == "broadcast" {// 广播
+			ws.Broadcast([]byte("hello,welcome"), nil)
+			return
+		}
+		ws.Send(message, conn) // 单对单发送
+
+	})
+
+
 	conn , err := ws.GetUpgradeConnection(ctx.Writer, ctx.Request)
 	if err != nil {
 		http.NotFound(ctx.Writer, ctx.Request)

@@ -36,9 +36,11 @@ func init()  {
 	viper.SetDefault(logPathKey, "/tmp")
 
 	// database 默认配置
+	viper.SetDefault(dbNameKey, "wuziqi")
 	viper.SetDefault(dbDriverKey, "mysql")
 	viper.SetDefault(dbHostKey, "127.0.0.1")
 	viper.SetDefault(dbPortKey, 3306)
+	viper.SetDefault(dbUserKey,"root")
 	// 设置连接池默认能同时打开40个连接
 	viper.SetDefault(dbMaxOpenConnectionsKey, 40)
 	// 设置连接池默认能同时保存最大10个空余连接

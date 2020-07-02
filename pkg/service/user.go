@@ -23,3 +23,13 @@ func (service *UserService) Auth(req request.UserAuthRequest) {
 
 	// TODO
 }
+
+
+func (service *UserService) Login(req request.UserAuthRequest){
+	userDao := dao.User(app.DB())
+
+	if err := userDao.Login(req); err != nil {
+		//auth.Jwt()
+
+	}
+}

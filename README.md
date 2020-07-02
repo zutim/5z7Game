@@ -106,7 +106,8 @@ npm install -g wscat
 ```
 wscat -c ws://localhost:8080/v1/ws
 ```
-
+npm config set prefix "E:\node-v14.2.0-win-x64\node_global"
+npm config set cache "E:\node-v14.2.0-win-x64\node_cache"
 输入:`hello`
 
 
