@@ -562,8 +562,8 @@
             }
         },
         initNetBattle:function () {
-            let url = "localhost:8080/v1/ws";
-            let ws = new WebSocket("ws://" + url,['Sec-WebSocket-Protocol']);
+            let url = "localhost:8080/ws";
+            let ws = new WebSocket("ws://" + url);
             netManager.init(ws);
             webServer.ws.onopen = function(evt){
                 netManager.ready()

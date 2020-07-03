@@ -1,14 +1,18 @@
 package app
 
-import "github.com/ebar-go/ws"
+import (
+	"fmt"
+	"github.com/ebar-go/ego"
+)
 
-var w ws.Manager
+var w ego.WsServer
 
 func init()  {
-	w = ws.New()
+	fmt.Println("wqewqewq")
+	w = ego.WebsocketServer()
 }
 
-func Websocket() ws.Manager {
+func Websocket() ego.WsServer {
 	return w
 }
 

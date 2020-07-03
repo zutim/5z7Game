@@ -3,7 +3,7 @@ package route
 import (
 	"5z7Game/http/handler"
 	"5z7Game/http/middleware"
-	"github.com/ebar-go/ego"
+	"5z7Game/pkg/app"
 	"github.com/gin-gonic/gin"
 )
 
@@ -43,10 +43,8 @@ func Load(router *gin.Engine)  {
 
 	}
 
-
 	// websocket
-	ws := ego.WebsocketServer()
-
+	ws :=app.Websocket()
 	router.GET("/ws", handler.WebsocketHandler)
 
 	go ws.Start()

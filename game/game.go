@@ -1,10 +1,11 @@
 package game
 
 import (
+	"5z7Game/pkg/app"
 	"5z7Game/pkg/utils"
 	"fmt"
-	"github.com/ebar-go/ws"
 	"5z7Game/msg"
+	"github.com/ebar-go/ego"
 	"sync"
 )
 
@@ -12,7 +13,8 @@ type Game struct {
 	r Rooms
 }
 
-func (this *Game) Handler(client *ws.Connection, reply *msg.Common) {
+func (this *Game) Handler(client *ego.WebsocketConn, reply *msg.Common) {
+	ws :=app.Websocket()
 	s := reply.Op
 	switch s {
 		case "game_initClientStatus": //用户初始化连接
@@ -32,7 +34,7 @@ func (this *Game) Handler(client *ws.Connection, reply *msg.Common) {
 				if  err != nil {
 					fmt.Println(err)
 				}
-				client.Send([]byte(res))
+				ws.Send([]byte(res),client)
 				return
 			}
 
@@ -48,7 +50,7 @@ func (this *Game) Handler(client *ws.Connection, reply *msg.Common) {
 				if  err != nil {
 					fmt.Println(err)
 				}
-				client.Send([]byte(res))
+				ws.Send([]byte(res),client)
 				return
 			}
 
@@ -87,7 +89,7 @@ func (w *Rooms) init() {
 	for i := range w.list {
 		w.list[i] = &Room{
 			id:      i,
-			Clients: make(map[string]*ws.Connection, 2),
+			Clients: make(map[string]*ego.WebsocketConn, 2),
 		}
 	}
 }
@@ -98,7 +100,7 @@ func (w *Rooms) GetById(id int) *Room {
 
 func (w *Rooms) addRooms() {
 
-	w.list = append(w.list, &Room{id: len(w.list), Clients: make(map[string]*ws.Connection, 2)})
+	w.list = append(w.list, &Room{id: len(w.list), Clients: make(map[string]*ego.WebsocketConn, 2)})
 
 }
 
@@ -124,7 +126,7 @@ func (w *Rooms) FirstEmptyRoom() int {
 	return -1
 }
 
-func (w *Rooms) inRoom(c *ws.Connection) (roomid int, err error) {
+func (w *Rooms) inRoom(c *ego.WebsocketConn) (roomid int, err error) {
 	waitingRoom := w.WaitingRoom()
 	if waitingRoom == -1 {
 		//没有等待的房间

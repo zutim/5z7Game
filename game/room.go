@@ -2,18 +2,18 @@ package game
 
 import (
 	"5z7Game/msg"
+	"5z7Game/pkg/app"
 	"5z7Game/pkg/utils"
 	"errors"
 	"fmt"
 	"github.com/ebar-go/ego"
-	"github.com/ebar-go/ws"
 	"log"
 	"sync"
 )
 
 type Room struct {
 	id      int
-	Clients map[string]*ws.Connection
+	Clients map[string]*ego.WebsocketConn
 	timer   int //每步20秒
 	status  int //0空，1，有1个人，2，有2个人
 	battle  *Battle
@@ -39,7 +39,8 @@ func (r *Room) RoleIam(uuid string) (string, error) {
 //
 //}
 
-func (r *Room) determineRole(c *ws.Connection, m *msg.Common) {
+func (r *Room) determineRole(c *ego.WebsocketConn, m *msg.Common) {
+	ws :=app.Websocket()
 	r.mu.Lock()
 	for i := range r.Clients {
 		if r.battle.Black == "" {
@@ -55,7 +56,8 @@ func (r *Room) determineRole(c *ws.Connection, m *msg.Common) {
 			if  err != nil {
 				fmt.Println(err)
 			}
-			r.Clients[i].Send([]byte(res))
+			ws.Send([]byte(res),r.Clients[i])
+			//r.Clients[i].Send([]byte(res))
 			//r.SendToBlack(c, &msg.Common{
 			//	Op:      "game_role",
 			//	Args:    "black",
@@ -75,7 +77,8 @@ func (r *Room) determineRole(c *ws.Connection, m *msg.Common) {
 			if  err != nil {
 				fmt.Println(err)
 			}
-			r.Clients[i].Send([]byte(res))
+			ws.Send([]byte(res),r.Clients[i])
+			//r.Clients[i].Send([]byte(res))
 			//r.SendToWhite(c, &msg.Common{
 			//	Op:      "game_role",
 			//	Args:    "white",
@@ -94,7 +97,7 @@ func (r *Room) UpdateStatus() {
 	r.mu.Unlock()
 }
 
-func (r *Room) GameStart(c *ws.Connection, m *msg.Common) {
+func (r *Room) GameStart(c *ego.WebsocketConn, m *msg.Common) {
 	if r.status == 2 {
 		r.battle = NewBattle(func(in bool) {
 			var Msg string
@@ -147,7 +150,8 @@ func (r *Room) GameOver() {
 	r.battle.GameOver()
 }
 
-func (r *Room) BlackChessDown(c *ws.Connection, m *msg.Common) {
+func (r *Room) BlackChessDown(c *ego.WebsocketConn, m *msg.Common) {
+	ws:=app.Websocket()
 	var msgChess *msg.ChessDown
 	if err := utils.JsonDecode([]byte(m.Msg),&msgChess); err != nil {
 		fmt.Println(err)
@@ -160,7 +164,8 @@ func (r *Room) BlackChessDown(c *ws.Connection, m *msg.Common) {
 		if  err != nil {
 			fmt.Println(err)
 		}
-		r.Clients[r.battle.White].Send([]byte(res))
+		//r.Clients[r.battle.White].Send([]byte(res))
+		ws.Send([]byte(res),r.Clients[r.battle.White])
 		win := r.battle.CheckWin(msgChess)
 		if win {
 			log.Println("game_over winner:black")
@@ -183,7 +188,8 @@ func (r *Room) BlackChessDown(c *ws.Connection, m *msg.Common) {
 	}
 }
 
-func (r *Room) WhiteChessDown(c *ws.Connection, m *msg.Common) {
+func (r *Room) WhiteChessDown(c *ego.WebsocketConn, m *msg.Common) {
+	ws:=app.Websocket()
 	var msgChess *msg.ChessDown
 	if err := utils.JsonDecode([]byte(m.Msg),&msgChess); err != nil {
 		fmt.Println(err)
@@ -197,8 +203,8 @@ func (r *Room) WhiteChessDown(c *ws.Connection, m *msg.Common) {
 		if  err != nil {
 			fmt.Println(err)
 		}
-		r.Clients[r.battle.Black].Send([]byte(res))
-
+		//r.Clients[r.battle.Black].Send([]byte(res))
+		ws.Send([]byte(res),r.Clients[r.battle.Black])
 		win := r.battle.CheckWin(msgChess)
 		if win {
 			log.Println("game_over winner:white")
@@ -221,7 +227,7 @@ func (r *Room) WhiteChessDown(c *ws.Connection, m *msg.Common) {
 }
 
 //用户进入
-func (r *Room) ClientIn(c *ws.Connection) (bool, error) {
+func (r *Room) ClientIn(c *ego.WebsocketConn) (bool, error) {
 	ok := false
 	if r.status > 2 {
 		return false, errors.New("this room is full")
@@ -239,7 +245,7 @@ func (r *Room) ClientIn(c *ws.Connection) (bool, error) {
 
 func (r *Room) initClient() {
 	r.mu.Lock()
-	r.Clients = make(map[string]*ws.Connection, 2)
+	r.Clients = make(map[string]*ego.WebsocketConn, 2)
 	r.mu.Unlock()
 }
 

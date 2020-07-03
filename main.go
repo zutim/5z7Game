@@ -23,7 +23,6 @@ func init()  {
 		fmt.Println("close database")
 		_ = app.DB().Close()
 	})
-
 }
 
 func main() {
