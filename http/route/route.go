@@ -2,6 +2,7 @@ package route
 
 import (
 	"5z7Game/http/handler"
+	wshandler "5z7Game/http/handler/wsmanager"
 	"5z7Game/http/middleware"
 	"5z7Game/pkg/app"
 	"github.com/gin-gonic/gin"
@@ -45,7 +46,8 @@ func Load(router *gin.Engine)  {
 
 	// websocket
 	ws :=app.Websocket()
-	router.GET("/ws", handler.WebsocketHandler)
+
+	router.GET("/ws", wshandler.WebsocketHandler)
 
 	go ws.Start()
 
