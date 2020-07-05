@@ -1,7 +1,7 @@
 package game
 
 import (
-	"5z7Game/msg"
+	"5z7Game/http/handler/msg"
 	"5z7Game/pkg/app"
 	"github.com/ebar-go/ego"
 	"sync"

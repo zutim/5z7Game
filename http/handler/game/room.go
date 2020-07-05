@@ -1,7 +1,7 @@
 package game
 
 import (
-	"5z7Game/msg"
+	"5z7Game/http/handler/msg"
 	"5z7Game/pkg/app"
 	"5z7Game/pkg/utils"
 	"errors"

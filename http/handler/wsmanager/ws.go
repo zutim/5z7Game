@@ -2,7 +2,7 @@ package wsmanager
 
 import (
 	"5z7Game/http/handler/game"
-	"5z7Game/msg"
+	"5z7Game/http/handler/msg"
 	"5z7Game/pkg/app"
 	"5z7Game/pkg/utils"
 	"fmt"

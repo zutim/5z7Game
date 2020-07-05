@@ -1,9 +1,8 @@
-package game
+package msg
 
-import "5z7Game/msg"
 
 type NewMsg struct {
-	msg  *msg.Common
+	msg  *Common
 	head bool
 }
 
@@ -12,7 +11,7 @@ func NewGameMsg() NewMsg {
 }
 
 func (n *NewMsg) init() *NewMsg {
-	n.msg = &msg.Common{
+	n.msg = &Common{
 		Op:      "",
 		Args:    "",
 		Msg:     "",
@@ -45,7 +44,7 @@ func (n *NewMsg) hasOp() bool {
 	}
 	return false
 }
-func (n *NewMsg) Done() *msg.Common {
+func (n *NewMsg) Done() *Common {
 	if n.hasOp() {
 		return n.msg
 	}
