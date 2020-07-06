@@ -1,8 +1,8 @@
 package app
 
 import (
-	"5z7Game/config"
 	"5z7Game/pkg/utils"
+	"github.com/ebar-go/ego/component/config"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 	"sync"

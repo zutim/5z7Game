@@ -1,7 +1,7 @@
 package game
 
 import (
-	"5z7Game/msg"
+	"5z7Game/http/handler/msg"
 	"errors"
 	"log"
 	"sync"

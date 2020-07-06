@@ -1,13 +1,9 @@
 package app
 
 import (
-	"5z7Game/config"
 	"5z7Game/pkg/constant"
 	"github.com/sirupsen/logrus"
 	"io"
-	"log"
-	"os"
-	"path"
 	"sync"
 )
 
@@ -41,19 +37,4 @@ func (l *LoggerInstance) getInstance(writer io.Writer) {
 
 	l.instance.Out = writer
 
-}
-
-// Logger return logrus instance
-func Logger() *logrus.Logger {
-	// do once
-	logger.once.Do(func() {
-		// 指定日志的输出为文件，默认是os.Stdout
-		f, err := os.OpenFile(path.Join(config.Server().LogPath, "app.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-		if err != nil {
-			log.Fatal("Failed to open:", err.Error())
-		}
-		logger.getInstance(f)
-	})
-
-	return logger.instance
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"5z7Game/config"
 	"5z7Game/http/route"
 	"fmt"
 	"github.com/ebar-go/ego"
@@ -12,7 +11,8 @@ import (
 
 func init()  {
 	// 加载配置
-	secure.Panic(config.ReadFromFile("app.yaml"))
+	//secure.Panic(config.ReadFromFile("app.yaml"))
+	secure.Panic(app.Config().LoadFile("app.yaml"))
 
 	// 初始化数据库
 	secure.Panic(app.InitDB())
